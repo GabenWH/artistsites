@@ -1,0 +1,25 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Resources:
+  ArtFileProcessor:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: artfile_processor.lambda_handler
+      Runtime: python3.12
+      MemorySize: 128
+      Timeout: 10
+      Policies:
+      - S3ReadPolicy:
+          BucketName: test-image-art
+      - S3WritePolicy:
+          BucketName: test-image-art
+      CodeUri: s3://aws-sam-cli-managed-default-samclisourcebucket-bcvmbeghv53k/test-art-editor/aa72e173f1fb65a6312d4306bc6bb0cd
+    Metadata:
+      SamResourceId: ArtFileProcessor
+Outputs:
+  ArtFileProcessorArn:
+    Description: ARN of the ArtFileProcessor Lambda Function
+    Value:
+      Fn::GetAtt:
+      - ArtFileProcessor
+      - Arn

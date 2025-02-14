@@ -1,0 +1,42 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Resources:
+  ArtFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: art.handler
+      Runtime: nodejs18.x
+      MemorySize: 128
+      Timeout: 10
+      Environment:
+        Variables:
+          IMAGE_BUCKET: test-image-art
+          S3_ENDPOINT: https://s3.amazonaws.com
+      Events:
+        ArtAPI:
+          Type: Api
+          Properties:
+            Path: /art
+            Method: GET
+            RestApiId: !Ref MyApi
+
+  MyApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: dev
+      # Enable CORS for all origins; you can fine-tune this as needed
+      Cors: "'*'"
+
+Globals:
+  Function:
+    Timeout: 10
+    MemorySize: 128
+
+Outputs:
+  ApiGatewayInvokeURL:
+    Description: "The API Gateway endpoint for the application"
+    Value: !Sub "https://${MyApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+    Export:
+      Name: "ApiGatewayInvokeURL"
